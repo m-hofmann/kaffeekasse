@@ -1,54 +1,161 @@
 \documentclass[11pt,a4paper]{IEEEtran}
 \usepackage[ngerman]{babel}
 \usepackage[utf8]{inputenc}
+\usepackage{enumitem} % referencable enumerations
+\usepackage{eurosym}
+
+\usepackage{siunitx}
+
+% make inches available
+\let\DeclareUSUnit\DeclareSIUnit
+\let\US\SI
+\DeclareUSUnit\inch{Zoll}
+
+\usepackage{biblatex}
+\addbibresource{references.bib}
 
 \begin{document}
 
 \title{DIY-Projekt Kaffeekasse}
-\author{\IEEEauthorblockN{Martin Hofmann}
+\author{\IEEEauthorblockN{Martin Hofmann}\\
     \IEEEauthorblockA{Universität Erlangen-Nürnberg\\
     Email: martin.hofmann@fau.de}
 }
 
 \date{6. Februar 2016}
-% Just remember to make sure that the TOTAL number of authors
-% is the number that will appear on the first page PLUS the
-% number that will appear in the \additionalauthors section.
 
 \maketitle
 \begin{abstract}
-    Abstract TODO
+    Blubbblabla
 \end{abstract}
 
-\section{Einführung}
+\section{Motivation}
 
-Im Rahmen meiner Werkstudententätigkeit bei einer Softwarefirma, benutzte ich 
-die abteilungseigene Kaffeemaschine. Um zum Ende des Monats die Kosten für
-Kaffee fair nach der jeweiligen Anzahl an getrunkenen Kassen auf die Mitarbeiter
-zu verteilen, wird eine Strichliste geführt.
+Ziel des Projektes ist es, ein System zur Verwaltung von Nutzerkonten und zur
+Abrechnung von 
 
-Das manuelle Führen einer solchen Liste -- verbunden mit dem eintippen
-derselben in ein Tabellenkalkulationsprogramm -- stellt den Anreiz dar, die 
-Abrechnung des Kaffeekonsums zu automatisieren.
+Um die Abrechnung von Kaffeekäufen einfach zu gestalten, ergaben sich folgende
+Anforderungen an das System:
 
-Die Möglichkeiten 
+\begin{enumerate}
+    \item\label{req0} Die Authentifizierung von Nutzern muss einfach erfolgen.
+    \item\label{req1} Die Bedienung des Gerätes muss intuitiv möglich sein.
+    \item\label{req2} Das Gerät muss ohne Netzwerkverbindung funktionieren.
+\end{enumerate}
 
-\section{Body} %\end{document}  % This is where a 'short' article might terminate
-%
-% The following two commands are all you need in the
-% initial runs of your .tex file to
-% produce the bibliography for the citations in your paper.
-\bibliographystyle{abbrv}
-\bibliography{sigproc}  % sigproc.bib is the name of the Bibliography in this case
-% You must have a proper ".bib" file
-%  and remember to run:
-% latex bibtex latex latex
-% to resolve all references
-%
-% ACM needs 'a single self-contained file'!
-%
-%APPENDICES are optional
-%\balancecolumns
-%\appendix
-%Appendix A
+Anforderung \ref{req0} soll durch die Verwendung von Firmenausweisen zur 
+Identifizierung von Nutzern gelöst werden. Neben technischen Schwierigkeiten,
+auf die im Kapitel \ref{sec:rfid} genauer eingegangen wird, ergaben sich hierbei
+auch den Datenschutz betreffende Konsequenzen.
+
+Beim Zugriff auf den Firmenausweis soll das Lesen von persönlichen
+Informationen (Personalnummer, Schließberechtigungen und ähnliches)
+unterbleiben. Da im Rahmen dieses Projektes jedoch nur die ID-Nummer des im
+Ausweis eingebetteten Chips benötigt wird, welche nicht ohne weiteres der
+Personalnummer zugeordnet werden kann, sind datenschutztechnische Belange
+erfüllt.
+
+Um eine einfache Bedienung des Gerätes nach Punkt \ref{req1} zu ermöglichen,
+wurde entschieden, eine Touch-Oberfläche zu entwickeln. Auf Details hierzu
+wird in den Kapiteln \ref{sec:hw} (der verwendete Touchscreen) und \ref{sec:sw}
+ (Software für die grafische Oberfläche) eingegangen.
+
+\section{Auslesen von RFID-Karten}
+\label{sec:rfid}
+
+\section{Hardware}
+\label{sec:hw}
+
+Dieses Kapitel gibt einen Überblick über die verwendeten Hardware-Komponenten.
+
+\subsection{Raspberry Pi}
+
+\subsection{Touchscreen}
+
+Die geplante Anwendung hat geringe Anforderungen an einen Touch-Screen: Da nur
+wenige Zeilen Text sowie Schaltflächen angezeigt werden müssen, sind auch 
+Bildschirme mit einer kleinen Diagonale geeignet.
+
+\subsubsection{Übersicht über verfügbare Optionen}
+
+Für den Raspberry Pi sind verschiedenste Touch-Screen-Module verfügbar.
+Besonders häufig vertreten sind hier Module mit einer Größe von circa
+\SI{3}{\inch}. Mit Preisen von unter 20 \euro sind sie sehr günstig auf den
+einschlägigen Handelsplattformen im Internet erhältlich.
+
+Allen Angeboten gemeinsam ist, dass sie im kleingedruckten auf ausführliche
+Installations-Anweisungen für Treiber verweisen. Diese enthalten entweder
+zusätzliche Paketquellen mit angepassten Linux-Kernel-Images oder komplette
+vorkonfigurierte Betriebssystem-Images. 
+
+Der Ursprung dieser Software-Komponenten ist meist nicht bekannt, in den
+Angeboten wird oft auf Downloads bei anonymen Cloud-Plattformen oder gar
+Share-Hostern verwiesen. Da die Treiber oft nur in Binärform vorliegen, und 
+die Update-Situation nicht geklärt ist, ist die Zukunftssicherheit solcher 
+Lösungen ungewiss.
+
+Da der Autor dieser Dokumentation mit der Plattform \emph{Cubietruck} bereits
+schlechte Erfahrungen mit kaum gepflegten Binärtreibern gemacht hat, schieden
+diese Touch-Screen-Module aus.
+
+Seit Anfang 2015 ist ein offizielles Touch-Screen-Modul für den Raspberry Pi 
+erhätlich, welches von der Raspberry Pi Foundation entwickelt wurde. Treiber
+für diesen Bildschirm sind im Raspbian-Betriebssystem-Image bereits enthalten.
+
+Im Unterschied zu den vorgenannten Modulen ist das offizielle Modul deutlich 
+größer (\SI{7}{\inch} Diagonale) und auch teurer (circa 60 \euro). Aufgrund
+der einfacheren Installation und der Verfügbarkeit von Updates wurde entschieden,
+das offizielle Display zu verwenden.
+
+\subsubsection{Bewertung}
+
+Das Display lief wie versprochen mit einem aktuellen Raspbian-Image ohne
+jegliche weitere Konfiguration. Auffällig ist die geringe Blickwinkelstabilität
+ -- die Qualität ist unter der von günstigen Tablet-Computern. 
+
+Als weiterer Negativ-Punkt ist die fehlende Unterstützung der
+Helligkeitsregelung zu nennen. Während die Beleuchtung nach einem Patch von
+Software ein- und ausgeschaltet werden kann, ist die Erweiterung um eine
+Helligkeitsregelung ungewiss\autocite{TouchBacklight}.
+
+\subsection{DS3231 Uhr-Modul}
+
+Der Raspberry Pi enthält keinen RTC-Chip\footnote{\emph{real-time clock},
+speichert physikalische Zeit}. Bei jedem Systemstart wird die Zeit per
+NTP\footnote{\emph{network time protocol}} aus dem Internet bezogen.
+
+Da im geplanten Einsatz-Szenario keine Internet-Verbindung besteht, musste ein
+externes RTC-Modul für den Raspberry Pi nachgerüstet werden. Es enthält eine
+auswechselbare Puffer-Batterie, damit die Uhrzeit auch bei Entfernen der 
+Stromquelle des Raspberry Pi aktuell bleibt. 
+
+%TODO bild
+
+Angebunden wird das Modul über den I2C-Bus.
+
+\section{Software}
+\label{sec:sw}
+
+\subsection{Der Adafruit-PN532-Python-Treiber} %\end{document}  % This is where a 'short' article might terminate
+
+\subsection{Grafische Oberfläche}
+\label{sec:gui}
+
+\subsection{Datenhaltung}
+
+\subsection{Modellierung als Zustandsautomat}
+
+\section{Aktueller Stand}
+
+\section{Ausblick und Erweiterungsmöglichkeiten}
+
+Mehrfach wurde vorgeschlagen, zur einfacheren Authentifizierung von Nutzern 
+einen Fingerabdruckleser zu verwenden. 
+
+Ein weiteres Wunsch-Feature ist die Abspeicherung von Transaktionen mit
+Zeitstempeln. Dies würde eine Analyse des persönlichen Kaffee-Konsums
+ermöglichen. Die Implementierung dieses Features sollte als Opt-In nur für
+interessierte Benutzer erfolgen. 
+
+\printbibliography
 \end{document}
