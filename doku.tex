@@ -2,7 +2,7 @@
 \usepackage[utf8]{inputenc} \usepackage{enumitem} % referencable enumerations
 \usepackage{eurosym}
 
-\usepackage{siunitx}
+\usepackage[binary-units=true]{siunitx}
 % make inches available as a unit
 \let\DeclareUSUnit\DeclareSIUnit \let\US\SI \DeclareUSUnit\inch{Zoll}
 
@@ -180,12 +180,57 @@ Angebunden wird das Modul über den I2C-Bus.
 
 \section{Software} \label{sec:sw}
 
-\subsection{Der Adafruit-PN532-Python-Treiber} %\end{document}  % This is where
-a 'short' article might terminate
+Eine häufig verwendete Programmiersprache für die Zielplattform ist Python. Für
+sie stehen viele Bibliotheken bereit, die das Arbeiten mit dem Raspberry Pi 
+erleichtern. Dementsprechend wurde die Applikation für das Projekt in Python 3
+entwickelt.
 
-\subsection{Grafische Oberfläche} \label{sec:gui}
+Dieses Kapitel gibt einen Überblick über die Grob-Architektur der Software und
+Details wie Hardware-Treiber, Datenhaltung und die grafische Oberfläche.
 
-\subsection{Datenhaltung}
+\subsection{Architektur}
+
+% TODO do me
+Die Architektur der Software ist in Abbildung TODO dargestellt. Die Software
+ist multi-threaded aufgebaut. Alle Haupt-Komponenten (NFC-Daemon, zentraler 
+Controller, grafische Oberfläche) laufen in eigenen Threads. 
+
+Im Folgenden werden die einzelnen Bestandteile besprochen.
+
+\subsection{Der Adafruit-PN532-Python-Treiber} 
+
+Für das verwendete PN532-Board existiert bereits ein Python-Treiber der Firma
+Adafruit\autocite{AdafruitPN532}. Dieser Treiber ist ursprünglich nur für Python
+2 vorgesehen. Bei der Aufnahme in das Projekt wurde er für die Kompatibilität
+mit Python 3 angepasst.
+
+Es wurde als wünschenswert angesehen, den Treiber Interrupt-basiert zu
+gestalten: Der Raspberry Pi sollte über das Auflegen einer Karte durch den
+Kartenleser informiert werden, anstatt dauerhaft das Vorhandensein einer Karte
+abzuprüfen. Detailliertes Studium der technischen
+Dokumentation\autocite{Pn532Manual} ergab jedoch keine Möglichkeit, dies mit
+dem PN532 zu realisieren. 
+
+Ein Interrupt-Modus existiert für das Gerät nur für 
+die Konfiguration als Slave (in dem der PN532 passiv wartet und von einem Host
+angesprochen wird). Im Rahmen des Projekts wird der PN532 vom NFC-Controller
+deswegen im Intervall von \SI{250}{\milli\second} abgefragt.
+
+Diese Lösung funktionierte mit zum Testen verwendeten \emph{Mifare Classic}
+Karten, die eine UID der Größe \SI{4}{\byte} haben, problemlos. Beim Test mit
+dem tatsächlichen Firmenausweis konnte jedoch keine UID gelesen werden.
+
+Debugging der vom Treiber empfangenen Frames mit Hilfe des technischen Handbuchs
+des PN532 ergab, dass der Treiber eine fest kodierte Paketlänge verwendet. Für
+Chips mit einer UID der Größe \SI{7}{\byte} führte dies dazu, dass die 
+Prüfsumme des Frames nicht mehr gelesen wurde und deren Überprüfung im Treiber
+fehlschlug.
+
+Als Lösung wurde die Paketlänge entsprechend angepasst und ein Pull Request auf
+Github an das Projekt gesendet\autocite{AdafruitPullRequest}. Eine
+Restrukturierung des Treibers, so dass dieser die vom PN532 übermittelte 
+Frame-Länge beachtet, wäre wünschenswert, fand jedoch aufgrund des Aufwands
+im Rahmen dieses Projektes noch nicht statt.
 
 \subsection{Modellierung als Zustandsautomat}
 
@@ -231,6 +276,21 @@ Aus Platzgründen nicht eingezeichnet sind die Anweisungen an die
 Benutzeroberfläche. Bei jedem Zustandsübergang wird ein Event abgesandt, das 
 den Übergang an die Oberfläche signalisiert. So wird sichergestellt, dass
 Anzeige und interne Logik stehts den gleichen Zustand repräsentieren.
+
+\subsection{Grafische Oberfläche} 
+\label{sec:gui}
+
+\subsection{Datenhaltung}
+
+Zur Speicherung der Nutzerdaten wurde auf eine SQL-Datenbank zurückgegriffen.
+Die Datenbank-Anbindung wurde mit dem Python-Paket
+\emph{SQLAlchemy}\autocite{SQLAlchemy} realisiert. Es bietet einen komfortablen
+Mapper von Python-Objekten nach Tabellen. 
+
+Schwierigkeiten ergaben sich lediglich durch den Multi-Threading-Ansatz des 
+Programmes, da so die gleichen Objekte in mehreren Datenbank-Sitzungen benötigt
+wurden. Für diesen Fall bot sich die Verwendung von \texttt{scoped\_session}
+an, die SQLAlchemy um eine thread-sichere Schnittstelle erweitert.
 
 \section{Aktueller Stand}
 
