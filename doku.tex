@@ -29,10 +29,14 @@ Abrechnung von
 Um die Abrechnung von Kaffeekäufen einfach zu gestalten, ergaben sich folgende
 Anforderungen an das System:
 
-\begin{enumerate} \item\label{req0} Die Authentifizierung von Nutzern muss
-        einfach erfolgen.  \item\label{req1} Die Bedienung des Gerätes muss
-        intuitiv möglich sein.  \item\label{req2} Das Gerät muss ohne
-            Netzwerkverbindung funktionieren.  \end{enumerate}
+\begin{enumerate} 
+    \item\label{req0} Die Authentifizierung von Nutzern muss
+        einfach erfolgen.  
+    \item\label{req1} Die Bedienung des Gerätes muss
+        intuitiv möglich sein.  
+    \item\label{req2} Das Gerät muss ohne
+        Netzwerkverbindung funktionieren.  
+\end{enumerate}
 
 Anforderung \ref{req0} soll durch die Verwendung von Firmenausweisen zur
 Identifizierung von Nutzern gelöst werden. Neben technischen Schwierigkeiten,
@@ -53,11 +57,62 @@ in den Kapiteln \ref{sec:hw} (der verwendete Touchscreen) und \ref{sec:sw}
 
 \section{Auslesen von RFID-Karten} \label{sec:rfid}
 
+Die Abkürzung RFID steht für \emph{radio-frequency identification} und
+beschreibt allgemein das Verwenden von Funksystemen zur Identifizierung. Eine
+Untermenge von RFID ist NFC (\emph{near-field communication},
+Nahfeldkommunikation), welches den Frequenzbereich von \SI{13,56}{\mega\hertz}
+benutzt.
+
+\begin{figure}[ht]
+    \label{fig:rfid125khz}
+    \caption{RFID-Modul für \SI{125}{\kilo\hertz}}
+\end{figure}
+
+Im DIY-Bereich sind verschiedene RFID-Module für populäre Plattformen wie
+Arduino oder den Raspberry Pi erhältlich. Da zu Beginn unbekannt war, welchen
+Frequenzbereich in den ID-Karten verwendet wird, wurde zuerst
+\SI{125}{\kilo\hertz} Modul ausprobiert (siehe Abbildung \ref{fig:rfid125khz}.
+Dieses erkannte die gewünschten Karten jedoch nicht. 
+
+\begin{figure}[ht]
+    \label{fig:rfidnfc}
+    \caption{RFID-Modul für NFC}
+\end{figure}
+
+Häufig werden Chipkarten der Marke \emph{Mifare} nach dem NFC-Standard
+verwendet, so auch in den Studierendenausweisen der FAU\autocite{FauCARD}. Das
+Auslesen dieser Karten ist mit dem PN532-Mikrocontroller von NXP möglich. Der
+Chip ist von der amerikanischen Firma Adafruit\autocite{AdafruitHP} auf einer 
+Platine samt Anschlüssen und Antenne erhältlich (siehe Abbildung
+\ref{fig:rfidnfc}).
+
+Der PN532 kann an den Raspberry Pi über UART, I2C oder SPI angebunden werden.
+Laut \autocite{PN532Tutorial} bietet SPI die stabilste Verbindung. Die
+Konfiguration erfolgte problemlos nach dem verlinkten Tutorial. Der NFC-Leser
+konnte mit dem Programm \texttt{nfc-list} aus dem \texttt{Libnfc}-Paket 
+angesprochen werden und lieferte auch die benötigte ID des Firmenausweises
+zurück.
+
+Die Einbindung des Kartenlesers in die Python-Software, die im Rahmen dieses 
+Projektes entwickelt wird in Kapitel \ref{sec:sw} genauer erläutert.
+
 \section{Hardware} \label{sec:hw}
 
 Dieses Kapitel gibt einen Überblick über die verwendeten Hardware-Komponenten.
 
 \subsection{Raspberry Pi}
+
+Als zentrale Komponente des Projektes wurde ein sparsamer, preisgünstiger
+Rechner benötigt. Aufgrund seines hohen Bekanntheitsgrades, des geringen Preises 
+sowie der großen aktiven Entwicklergemeinschaft fiel die Entscheidung dabei
+auf den Raspberry Pi 2. 
+
+Der Raspberry Pi bietet eine Leiste von Allzweck-Anschlüssen, an die die
+benötigten Hardware-Komponenten angeschlossen werden könnte. Mit einem
+ARM-Quadcore-Prozessor mit einem Prozessortakt von \SI{900}{\mega\hertz} ist
+die Rechenleistung für das geplante Projekt ausreichend. Für grafische
+Oberflächen steht OpenGL-Hardware-Beschleunigung zur Verfügung, die jedoch im 
+Rahmen dieses Projektes versagte (siehe Kapitel \ref{sec:sw}).
 
 \subsection{Touchscreen}
 
@@ -189,4 +244,6 @@ Zeitstempeln. Dies würde eine Analyse des persönlichen Kaffee-Konsums
 ermöglichen. Die Implementierung dieses Features sollte als Opt-In nur für
 interessierte Benutzer erfolgen. 
 
-\printbibliography \end{document}
+\printbibliography
+
+\end{document}
