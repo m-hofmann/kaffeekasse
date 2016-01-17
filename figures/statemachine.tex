@@ -1,0 +1,23 @@
+\tikzset{state/.style={draw,rectangle,rounded corners=4pt}}
+\begin{tikzpicture}[->,>=stealth',shorten >= 1pt, auto, node distance=5cm]
+    \node[initial, state]   (WaitForCard)       {WaitForCard};
+    \node[state]            (ChooseAction)  [right of=WaitForCard]  {ChooseAction};
+    \node[state]            (RemoveCard)    [above of = ChooseAction]   {RemoveCard};
+    \node[state]            (ShowAccount)   [right of = ChooseAction]   {ShowAccount};
+
+    \path   
+    (WaitForCard)   
+    edge [bend left]   node {NfcCard}    (ChooseAction)
+    edge [loop above]   node {NfcInvalid}   (WaitForCard)
+    (ChooseAction)
+    edge [bend left]    node {GuiAccount}   (ShowAccount)
+    edge [bend right]    node {GuiCoffee}   (RemoveCard)
+    edge [bend left]   node {NfcInvalid}    (WaitForCard)
+    (RemoveCard)
+    edge [bend right]    node {NfcInvalid}    (WaitForCard)
+    (ShowAccount)
+    edge [bend left]    node {GuiBack}  (ChooseAction)
+    edge [bend left=50]    node {NfcInvalid}   (WaitForCard);
+
+\end{tikzpicture}
+
