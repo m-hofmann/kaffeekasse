@@ -183,14 +183,13 @@ externes RTC-Modul für den Raspberry Pi nachgerüstet werden. Es enthält eine
 auswechselbare Puffer-Batterie, damit die Uhrzeit auch bei Entfernen der
 Stromquelle des Raspberry Pi aktuell bleibt. 
 
-%TODO bild
-
 Angebunden wird das Modul über den I\textsuperscript{2}C-Bus. Eine entsprechende
 Anleitung findet sich unter \autocite{DS3231Tutorial}. Zu beachten ist, dass
 das Tutorial für den Raspberry Pi der ersten Generation geschrieben wurde. Für
 den Raspberry Pi 2 heißt das benötigte Kernel-Modul \texttt{i2c-bcm2835}.
 
-\section{Software} \label{sec:sw}
+\section{Software} 
+\label{sec:sw}
 
 Eine häufig verwendete Programmiersprache für die Zielplattform ist Python. Für
 sie stehen viele Bibliotheken bereit, die das Arbeiten mit dem Raspberry Pi 
@@ -202,7 +201,7 @@ Details wie Hardware-Treiber, Datenhaltung und die grafische Oberfläche.
 
 \subsection{Architektur}
 
-% TODO do me
+% TODO Abbildung
 Die Architektur der Software ist in Abbildung TODO dargestellt. Die Software
 ist multi-threaded aufgebaut. Alle Haupt-Komponenten (NFC-Daemon, zentraler 
 Controller, grafische Oberfläche) laufen in eigenen Threads. 
@@ -292,6 +291,49 @@ Anzeige und interne Logik stehts den gleichen Zustand repräsentieren.
 \subsection{Grafische Oberfläche} 
 \label{sec:gui}
 
+Die Oberfläche sollte den Anforderungen nach intuitiv und touch-freundlich
+sein. Zur Gestaltung von grafischen Oberflächen mit Python stehen verschiedene
+Toolkits zur Verfügung. In Python selbst ist das Toolkit Tk enthalten, welches
+jedoch technisch als veraltet angesehen werden kann. Desweiteren existieren
+diverse Bindings zu bekannten Toolkits wie Gtk und Qt. 
+
+Da der Autor des Projekts bereits früher Erfahrung mit Qt gesammelt hat, wurde 
+dieses Toolkit gewählt. Beeinflusst wurde diese Entscheidung durch das relativ
+neue Qt-Modul \emph{QML}. Es erlaubt, Oberflächen deklarativ mittels einer an
+CSS angelehnten Sprache zu erstellen. So können schnell ansprechende Ergebnisse
+erstellt werden, deren Logik durch Python-Code realisiert wird.
+
+Erste Mockups der Oberfläche waren vielversprechend. Leider gelang der 
+Anwendungsstart auf dem Zielsystem nicht. Dies konnten auf mangelnde 
+Hardware-Beschleunigung der Grafik-Treiber zurückgeführt werden. Dieser Schluss
+überraschte nur teilweise: 
+
+Zwar ist die Grafik-Einheit des Raspberry-Pi OpenGL-fähig. Durch die Verwendung
+proprietärer Treiber des Herstellers Broadcom statt des Linux-Grafik-Stack ist
+diese jedoch für viele Anwendungen nicht direkt nutzbar. Dies trifft auch für
+das in den Raspbian-Paketquellen enthaltene QML-Paket zu.
+
+Laut Qt-Dokumentation ist alternativ die Oberflächentechnik EGL nutzbar. Auch
+diese sollte auf dem Raspberry Pi zur Verfügung stehen. Als Einschränkung 
+gegenüber OpenGL füllen EGL-Anwendungen immer den kompletten Bildschirm aus.
+Leider scheiterte auch mit dieser Technik der QML-Start.
+
+\begin{figure}[htb]
+    \label{fig:qt}
+    \centering
+    \includegraphics[width=.9\columnwidth]{images/screenshot}
+    \caption{Grafische Oberfläche: Maske zur Aktionsauswahl durch den Benutzer.}
+\end{figure}
+
+Nach diesem Rückschlag wurde das QML-Konzept verworfen. Die Oberfläche wurde
+mittels der Qt-Widgets-Bibliothek erstellt und läuft als Vollbild-Anwendung 
+auf dem Raspberry Pi. In Abbildung \ref{fig:qt} ist die Maske zur Auswahl von
+Aktionen durch den Benutzer nach erfolgter Authentifizierung dargestellt. Durch
+die objektorientierte Schnittstelle von Qt, und dessen Möglichkeiten zur
+Verwendung von Stylesheets, gelang die Entwicklung schnell. Als 
+\glqq Eye-Candy\grqq{ }für die Nutzer konnten sogar Animationen bei den Übergängen von Ansicht
+zu Ansicht eingebaut werden.
+
 \subsection{Datenhaltung}
 
 Zur Speicherung der Nutzerdaten wurde auf eine SQL-Datenbank zurückgegriffen.
@@ -304,14 +346,38 @@ Programmes, da so die gleichen Objekte in mehreren Datenbank-Sitzungen benötigt
 wurden. Für diesen Fall bot sich die Verwendung von \texttt{scoped\_session}
 an, die SQLAlchemy um eine thread-sichere Schnittstelle erweitert.
 
-\section{Aktueller Stand}
+\section{Aktueller Stand und verpflichtende Features}
+
+Zum gegenwärtigen Zeitpunkt sind die Grundfunktionalitäten des Projektes,
+bestehend aus Ansteuerung der Hardware, Implementierung von zentralen 
+Software-Komponenten, Datenbank-Anbindung und der grafischen Oberfläche 
+erfolgt. Es fehlen nur noch zwei Komponenten zur Fertigstellung:
+
+Eine Verwaltungsoberfläche für Administratoren muss noch implementiert werden.
+Diese erlaubt es, den Kontostand beliebiger Nutzer am Gerät zu verändern, um
+Einzahlungen in die Kaffeekasse zu ermöglichen. Auch das Anlegen/Entfernen
+von Nutzern muss möglich sein.
+
+Ein weiterer Punkt auf der TODO-Liste ist das Anfertigen eines Gehäuses für die
+Kaffeekasse. Wegen der Größe des Bildschirms wird dieses vermutlich aus Holz
+gefertigt werden, anstatt auf die beliebte 3D-Drucker-Lösung zurückzugreifen.
 
 \section{Ausblick und Erweiterungsmöglichkeiten}
 
 Mehrfach wurde vorgeschlagen, zur einfacheren Authentifizierung von Nutzern
-einen Fingerabdruckleser zu verwenden. 
+einen \emph{Fingerabdruckleser} zu verwenden. Ein für DIY-Projekte gerne 
+verwendeter günstiger Fingerabdruckleser befindet sich bereits im Besitz des
+Autors. Die softwareseitige Einbindung sowie die Funktionsweise des Scanners
+(Abspeicherung von Fingerabdrücken oder doch nur Hashwerten) muss jedoch noch
+geklärt werden.
 
-Ein weiteres Wunsch-Feature ist die Abspeicherung von Transaktionen mit
+Auch die Ergänzung der grafischen Oberfläche durch die Anzeige von QR-Codes
+ist gewünscht. Diese QR-Codes sollen Links zum Dienst \emph{Paypal me}
+enthalten und so ein einfaches Bezahlen von aufgelaufenen Kaffee-Schulden
+ermöglichen. Zu diesem Zweck sollen die Links mit den aktuellen Schulden
+aus dem Benutzerkonto parametrisiert werden können.
+
+Ein weiteres Wunsch-Feature ist die Abspeicherung von \emph{Transaktionen} mit
 Zeitstempeln. Dies würde eine Analyse des persönlichen Kaffee-Konsums
 ermöglichen. Die Implementierung dieses Features sollte als Opt-In nur für
 interessierte Benutzer erfolgen. 
