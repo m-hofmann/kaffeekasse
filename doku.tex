@@ -1,12 +1,16 @@
-\documentclass[11pt,a4paper]{IEEEtran} \usepackage[ngerman]{babel}
-\usepackage[utf8]{inputenc} \usepackage{enumitem} % referencable enumerations
+\documentclass[11pt,a4paper]{IEEEtran}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{enumitem} % referencable enumerations
 \usepackage{eurosym}
 
 \usepackage[binary-units=true]{siunitx}
 % make inches available as a unit
-\let\DeclareUSUnit\DeclareSIUnit \let\US\SI \DeclareUSUnit\inch{Zoll}
+\let\DeclareUSUnit\DeclareSIUnit
+\let\US\SI \DeclareUSUnit\inch{Zoll}
 
-\usepackage{biblatex} \addbibresource{references.bib}
+\usepackage{biblatex}
+\addbibresource{references.bib}
 \usepackage{tikz}
 \usetikzlibrary{shapes, shapes.geometric, arrows, automata}
 \usepackage{adjustbox}
@@ -65,26 +69,31 @@ benutzt.
 
 \begin{figure}[ht]
     \label{fig:rfid125khz}
+    \centering
+    \includegraphics[width=.8\columnwidth]{images/125khz_rfid}
     \caption{RFID-Modul für \SI{125}{\kilo\hertz}}
 \end{figure}
 
 Im DIY-Bereich sind verschiedene RFID-Module für populäre Plattformen wie
 Arduino oder den Raspberry Pi erhältlich. Da zu Beginn unbekannt war, welchen
-Frequenzbereich in den ID-Karten verwendet wird, wurde zuerst
-\SI{125}{\kilo\hertz} Modul ausprobiert (siehe Abbildung \ref{fig:rfid125khz}.
+Frequenzbereich in den ID-Karten verwendet wird, wurde zuerst ein 
+\SI{125}{\kilo\hertz} Modul ausprobiert (siehe Abbildung \ref{fig:rfid125khz}).
 Dieses erkannte die gewünschten Karten jedoch nicht. 
 
 \begin{figure}[ht]
     \label{fig:rfidnfc}
+    \centering
+    \includegraphics[width=.8\columnwidth]{images/nfc_reader}
     \caption{RFID-Modul für NFC}
 \end{figure}
 
-Häufig werden Chipkarten der Marke \emph{Mifare} nach dem NFC-Standard
-verwendet, so auch in den Studierendenausweisen der FAU\autocite{FauCARD}. Das
-Auslesen dieser Karten ist mit dem PN532-Mikrocontroller von NXP möglich. Der
-Chip ist von der amerikanischen Firma Adafruit\autocite{AdafruitHP} auf einer 
-Platine samt Anschlüssen und Antenne erhältlich (siehe Abbildung
-\ref{fig:rfidnfc}).
+Häufig werden zu Identifikationszwecken Chipkarten der Marke \emph{Mifare} nach
+dem NFC-Standard verwendet, so auch in den Studierendenausweisen der
+FAU\autocite{FauCARD}. Es erschien deshalb logisch, als nächsten Schritt ein
+entsprechendes Lesegerät zu testen. Das Auslesen dieser Karten ist mit dem
+PN532-Mikrocontroller von NXP möglich. Der Chip ist von der amerikanischen
+Firma Adafruit\autocite{AdafruitHP} auf einer Platine samt Anschlüssen und
+Antenne erhältlich (siehe Abbildung \ref{fig:rfidnfc}).
 
 Der PN532 kann an den Raspberry Pi über UART, I2C oder SPI angebunden werden.
 Laut \autocite{PN532Tutorial} bietet SPI die stabilste Verbindung. Die
@@ -256,7 +265,7 @@ mit dem Präfix \texttt{Nfc} beginnen kommen hierbei vom NFC-Kartenleser, solche
 die mit \texttt{GUI} beginnen von der grafischen Benutzeroberfläche. 
 
 \begin{description}
-    \item[NfcCard] ist ein Event, dass das Vorhandensein einer gültigen
+    \item[NfcCard] ist ein Event, das das Vorhandensein einer gültigen
         Karte auf dem Kartenleser signalisiert. Es enthält die eindeutige 
         Karten-ID. In der Implementierung des Automaten wird beim Übergang aus
         dem Zustand \texttt{WaitForCard} versucht, einen Nutzer in der
