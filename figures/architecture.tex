@@ -1,9 +1,16 @@
 \begin{tikzpicture}
     \tikzset{layer/.style={draw, rounded corners=3pt, minimum width=4.5cm,
     minimum height=1.1cm}};
+    \tikzset{db/.style={draw, cylinder, shape border rotate=90, aspect=0.25}};
+    \tikzset{hw/.style={draw, dashed}};
+
     \node[layer] (nfc) {NFCController};
     \node[layer, above = 1cm of nfc] (ctrl) {Controller (Statemachine)};
     \node[layer, above = 1cm of ctrl] (gui) {GUI};
+
+    % hw/db symbols
+    \node[db, right=1cm of ctrl.east] (db) {DB};
+    \node[hw, below=1cm of nfc.south] (reader) {NFC-Leser};
 
     % thread symbols
     \draw[ultra thick, ->] ([xshift=-0.7cm]nfc.west) arc (0:330:.5);
@@ -13,6 +20,10 @@
     % event paths
     \draw[->] (nfc) -- (ctrl) node[midway, right] {Events};
     \draw[<->] (gui) -- (ctrl) node[midway, right] {Events};
+
+    % connections to nfc reader / db
+    \draw[dotted] (ctrl) -- (db);
+    \draw[dotted] (nfc) -- (reader) node[midway, right] {SPI-Bus};
 
 \end{tikzpicture}
 
