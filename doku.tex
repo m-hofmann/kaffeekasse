@@ -12,7 +12,7 @@
 \usepackage{biblatex}
 \addbibresource{references.bib}
 \usepackage{tikz}
-\usetikzlibrary{shapes, shapes.geometric, arrows, automata}
+\usetikzlibrary{calc, positioning, shapes, shapes.geometric, arrows, automata}
 \usepackage{adjustbox}
 
 \begin{document}
@@ -23,23 +23,39 @@
 
 \date{6. Februar 2016}
 
-\maketitle \begin{abstract} Blubbblabla \end{abstract}
+\maketitle
+\begin{abstract} 
+    Zur Abrechnung von Kaffeekäufen in einer Software-Firma wurde bisher eine
+    neben der Kaffeemaschine aufgehängte Strichliste verwendet. Diese musste
+    manuell ausgewertet, und Konten für einzelne Mitarbeiter geführt werden.
+
+    Das Projekt \glqq Kaffeekasse\grqq, das im Rahmen der Vorlesung \glqq DIY:
+    Personal Fabrication\grqq{ } im Wintersemester 2015 an der 
+    Friedrich-Alexander-Universität Erlangen-Nürnberg entstand, entwickelte eine 
+    elektronische Kaffeekasse. 
+    
+    Diese unterstützt die Authentifizierung von Mitarbeitern mittels 
+    NFC-Technologie anhand von Firmenausweisen, führt Konten für Mitarbeiter und 
+    bietet eine intuitive Touchscreen-Oberfläche. Sie wurde mittels der 
+    Hardware-Plattform Raspberry Pi, einem PN532-NFC-Lesegerät in der
+    Programmiersprache Python und dem Qt-Toolkit realisiert.
+
+    Das vorliegende Dokument beschreibt Aufbau und Werdegang des Projekts.
+\end{abstract}
 
 \section{Motivation}
 
 Ziel des Projektes ist es, ein System zur Verwaltung von Nutzerkonten und zur
-Abrechnung von 
-
-Um die Abrechnung von Kaffeekäufen einfach zu gestalten, ergaben sich folgende
-Anforderungen an das System:
+Abrechnung von Kaffeekäufen in einer Büroumgebung zu gestalten. 
 
 \begin{enumerate} 
-    \item\label{req0} Die Authentifizierung von Nutzern muss
-        einfach erfolgen.  
+    \item\label{req0} Die Authentifizierung von Nutzern muss möglichst einfach 
+        erfolgen.  
     \item\label{req1} Die Bedienung des Gerätes muss
         intuitiv möglich sein.  
     \item\label{req2} Das Gerät muss ohne
-        Netzwerkverbindung funktionieren.  
+        Netzwerkverbindung funktionieren, da eine solche am Einsatzort für 
+        \glqq fremde Hardware\grqq{ }nicht zur Verfügung steht.
 \end{enumerate}
 
 Anforderung \ref{req0} soll durch die Verwendung von Firmenausweisen zur
@@ -58,6 +74,11 @@ Um eine einfache Bedienung des Gerätes nach Punkt \ref{req1} zu ermöglichen,
 wurde entschieden, eine Touch-Oberfläche zu entwickeln. Auf Details hierzu wird
 in den Kapiteln \ref{sec:hw} (der verwendete Touchscreen) und \ref{sec:sw}
 (Software für die grafische Oberfläche) eingegangen.
+
+Anforderung \ref{req2} erforderte, ein externes Uhr-Modul an den Raspberry Pi
+anzubringen. Konsequenzen ergeben sich auch bei der Verwaltungsoberfläche:
+Diese muss am Gerät selbst zugänglich sein, statt mittels einem integrierten 
+Server eine Web-Schnittstelle zu realisieren.
 
 \section{Auslesen von RFID-Karten} \label{sec:rfid}
 
@@ -201,10 +222,21 @@ Details wie Hardware-Treiber, Datenhaltung und die grafische Oberfläche.
 
 \subsection{Architektur}
 
-% TODO Abbildung
-Die Architektur der Software ist in Abbildung TODO dargestellt. Die Software
-ist multi-threaded aufgebaut. Alle Haupt-Komponenten (NFC-Daemon, zentraler 
-Controller, grafische Oberfläche) laufen in eigenen Threads. 
+\begin{figure}[htb]
+    \label{fig:arch}
+    \centering
+    \input{figures/architecture.tex}
+    \caption{Architektur der Software}
+\end{figure}
+
+Die Architektur der Software ist in Abbildung \ref{fig:arch} dargestellt. Die
+Software ist multi-threaded aufgebaut. Alle Haupt-Komponenten (NFC-Daemon,
+zentraler Controller, grafische Oberfläche) laufen in eigenen Threads. 
+
+Wie in der Grafik erkennbar ist, informiert der NFC-Leser den Controller über
+neu eintretende NFC-Events. Die Verbindung zwischen GUI und Controller ist
+bidirektional: Zustandswechsel im Programm werden an die GUI weitergegeben, 
+welche wiederum die Möglichkeit zur Manipulation des Programmablaufes bietet.
 
 Im Folgenden werden die einzelnen Bestandteile besprochen.
 
@@ -346,6 +378,17 @@ Programmes, da so die gleichen Objekte in mehreren Datenbank-Sitzungen benötigt
 wurden. Für diesen Fall bot sich die Verwendung von \texttt{scoped\_session}
 an, die SQLAlchemy um eine thread-sichere Schnittstelle erweitert.
 
+Im Bezug auf die Speicherung der Daten ist es auch wichtig zu beachten, dass am
+geplanten Einsatzort nachts die Stromversorgung abgeschaltet wird. Es ist 
+deshalb wichtig, Änderungen an der Datenbank sofort zu schreiben\footnote{Um
+    dieses Einsatzszenario komplett zu unterstützen sind noch weitere
+    Konfigurationen am Betriebssystem notwendig, die aktuell noch nicht
+vorgenommen wurden.}
+
+Um auf einen Datenbankserver zu verzichten -- bei der geringen Datenmenge der
+Applikation ist dieser nicht nötig -- wird als SQLAlchemy-Backend SQLite
+eingesetzt. Dieses hält die gesamte Datenbank in einer einzigen Datei vor. 
+
 \section{Aktueller Stand und verpflichtende Features}
 
 Zum gegenwärtigen Zeitpunkt sind die Grundfunktionalitäten des Projektes,
@@ -360,7 +403,9 @@ von Nutzern muss möglich sein.
 
 Ein weiterer Punkt auf der TODO-Liste ist das Anfertigen eines Gehäuses für die
 Kaffeekasse. Wegen der Größe des Bildschirms wird dieses vermutlich aus Holz
-gefertigt werden, anstatt auf die beliebte 3D-Drucker-Lösung zurückzugreifen.
+gefertigt werden. Eine beliebte Lösung ist es, Gehäuse mittels eines 3D-Druckers
+zu fertigen. Dies würde aufgrund der Abmessungen des Gerätes jedoch lange
+dauern.
 
 \section{Ausblick und Erweiterungsmöglichkeiten}
 

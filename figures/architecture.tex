@@ -1,0 +1,18 @@
+\begin{tikzpicture}
+    \tikzset{layer/.style={draw, rounded corners=3pt, minimum width=4.5cm,
+    minimum height=1.1cm}};
+    \node[layer] (nfc) {NFCController};
+    \node[layer, above = 1cm of nfc] (ctrl) {Controller (Statemachine)};
+    \node[layer, above = 1cm of ctrl] (gui) {GUI};
+
+    % thread symbols
+    \draw[ultra thick, ->] ([xshift=-0.7cm]nfc.west) arc (0:330:.5);
+    \draw[ultra thick, ->] ([xshift=-0.7cm]ctrl.west) arc (0:330:.5);
+    \draw[ultra thick, ->] ([xshift=-0.7cm]gui.west) arc (0:330:.5);
+
+    % event paths
+    \draw[->] (nfc) -- (ctrl) node[midway, right] {Events};
+    \draw[<->] (gui) -- (ctrl) node[midway, right] {Events};
+
+\end{tikzpicture}
+
