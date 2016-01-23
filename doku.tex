@@ -116,10 +116,30 @@ PN532-Mikrocontroller von NXP möglich. Der Chip ist von der amerikanischen
 Firma Adafruit\autocite{AdafruitHP} auf einer Platine samt Anschlüssen und
 Antenne erhältlich (siehe Abbildung \ref{fig:rfidnfc}).
 
+\begin{table}[!ht]
+    \label{tab:pn532pins}
+    \centering
+    \begin{tabular}{ll|l}
+        \multicolumn{2}{c}{Raspberry Pi Pin} & PN532 Pin \\
+        \hline\hline
+        Pin 2   & VCC 5V &   5V  \\
+        GPIO8   & SPI/CE0   & SCL/RX \\
+        GPIO9   & SPI/MISO & MISO \\
+        GPIO10  & SPI/MOSI & MOSI \\
+        GPIO11  & SPI/SCK & SCK \\
+        \hline
+    \end{tabular}
+    \caption{Pin-Belegung des PN532}
+\end{table}
+
 Der PN532 kann an den Raspberry Pi über UART, I2C oder SPI angebunden werden.
-Laut \autocite{PN532Tutorial} bietet SPI die stabilste Verbindung. Die
-Konfiguration erfolgte problemlos nach dem verlinkten Tutorial. Der NFC-Leser
-konnte mit dem Programm \texttt{nfc-list} aus dem \texttt{Libnfc}-Paket 
+Laut \autocite{PN532Tutorial} bietet SPI die stabilste Verbindung. Die 
+Pin-Belegung ist in Tabelle \ref{tab:pn532pins} dargestellt.
+
+Die Konfiguration erfolgte problemlos nach dem verlinkten Tutorial. Im
+Unterschied zum Tutorial muss beim hier verwendeten Raspberry Pi 2 das
+Kernel-Modul \texttt{spi-bcm2835} geladen werden. Im Anschluss konnte der
+NFC-Leser mit dem Programm \texttt{nfc-list} aus dem \texttt{Libnfc}-Paket
 angesprochen werden und lieferte auch die benötigte ID des Firmenausweises
 zurück.
 
