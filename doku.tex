@@ -15,6 +15,12 @@
 \usetikzlibrary{calc, positioning, shapes, shapes.geometric, arrows, automata}
 \usepackage{adjustbox}
 
+% captions of tables are too close to the table border because they have the
+% "table" label on a new line
+\usepackage{caption}
+\captionsetup[table]{format=plain, labelformat=simple, labelsep=period}
+
+
 \begin{document}
 
 \title{DIY-Projekt Kaffeekasse} \author{\IEEEauthorblockN{Martin Hofmann}\\
