@@ -95,10 +95,10 @@ Nahfeldkommunikation), welches den Frequenzbereich von \SI{13,56}{\mega\hertz}
 benutzt.
 
 \begin{figure}[ht]
-    \label{fig:rfid125khz}
     \centering
     \includegraphics[width=.8\columnwidth]{images/125khz_rfid}
     \caption{RFID-Modul für \SI{125}{\kilo\hertz}}
+    \label{fig:rfid125khz}
 \end{figure}
 
 Im DIY-Bereich sind verschiedene RFID-Module für populäre Plattformen wie
@@ -108,10 +108,10 @@ Frequenzbereich in den ID-Karten verwendet wird, wurde zuerst ein
 Dieses erkannte die gewünschten Karten jedoch nicht. 
 
 \begin{figure}[ht]
-    \label{fig:rfidnfc}
     \centering
     \includegraphics[width=.8\columnwidth]{images/nfc_reader}
     \caption{RFID-Modul für NFC}
+    \label{fig:rfidnfc}
 \end{figure}
 
 Häufig werden zu Identifikationszwecken Chipkarten der Marke \emph{Mifare} nach
@@ -123,7 +123,6 @@ Firma Adafruit\autocite{AdafruitHP} auf einer Platine samt Anschlüssen und
 Antenne erhältlich (siehe Abbildung \ref{fig:rfidnfc}).
 
 \begin{table}[!ht]
-    \label{tab:pn532pins}
     \centering
     \begin{tabular}{ll|l}
         \multicolumn{2}{c}{Raspberry Pi Pin} & PN532 Pin \\
@@ -136,6 +135,7 @@ Antenne erhältlich (siehe Abbildung \ref{fig:rfidnfc}).
         \hline
     \end{tabular}
     \caption{Pin-Belegung des PN532}
+    \label{tab:pn532pins}
 \end{table}
 
 Der PN532 kann an den Raspberry Pi über UART, I2C oder SPI angebunden werden.
@@ -249,10 +249,10 @@ Details wie Hardware-Treiber, Datenhaltung und die grafische Oberfläche.
 \subsection{Architektur}
 
 \begin{figure}[htb]
-    \label{fig:arch}
     \centering
     \input{figures/architecture.tex}
     \caption{Architektur der Software}
+    \label{fig:arch}
 \end{figure}
 
 Die Architektur der Software ist in Abbildung \ref{fig:arch} dargestellt. Die
@@ -377,10 +377,10 @@ gegenüber OpenGL füllen EGL-Anwendungen immer den kompletten Bildschirm aus.
 Leider scheiterte auch mit dieser Technik der QML-Start.
 
 \begin{figure}[htb]
-    \label{fig:qt}
     \centering
     \includegraphics[width=.9\columnwidth]{images/screenshot}
     \caption{Grafische Oberfläche: Maske zur Aktionsauswahl durch den Benutzer.}
+    \label{fig:qt}
 \end{figure}
 
 Nach diesem Rückschlag wurde das QML-Konzept verworfen. Die Oberfläche wurde
