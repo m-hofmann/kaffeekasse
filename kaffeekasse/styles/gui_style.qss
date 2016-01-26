@@ -1,0 +1,49 @@
+.QWidget {
+    background: #f3f2ef;
+}
+.QFrame#cardFrame, ChooseActionCard, StartCard, AccountCard, RemoveCard {
+    border: 1px solid #b8b7b7;
+    border-radius: 5px;
+    border-bottom: 5px solid #039a9a;
+    border-bottom-left-radius: 25px;
+    padding: 10px;
+    margin: 15px;
+    background: #fbfbfa;
+}
+
+.QLabel {
+    font-family: "Compatil UI, Palatino, Palatino Linotype, URW Palladio L, serif";
+    color: #039a9a;
+}
+
+.QLabel#h1 {
+    font-size: 48px;
+}
+
+.QLabel#h2 {
+    font-size: 30px;
+}
+
+.QWidget {
+    margin: 20px;
+    padding: 20px;
+}
+
+
+.QPushButton {
+    border: 1px solid #b8b7b7;
+    border-radius: 5px;
+    background: #e4e3e2;
+    margin: 20px;
+    padding: 10px;
+    font-size: 20px;
+}
+
+.QPushButton:pressed {
+    background: #c2e58f;
+}
+
+.QStackedLayout {
+    padding: 20px;
+    margin: 20px;
+}
