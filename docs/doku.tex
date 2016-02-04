@@ -221,9 +221,8 @@ Helligkeitsregelung ungewiss\autocite{TouchBacklight}.
 
 \subsection{DS3231 Uhr-Modul}
 
-Der Raspberry Pi enthält keinen RTC-Chip\footnote{\emph{real-time clock},
-speichert physikalische Zeit}. Bei jedem Systemstart wird die Zeit per
-NTP\footnote{\emph{network time protocol}} aus dem Internet bezogen.
+Der Raspberry Pi enthält keinen RTC-Chip. Bei jedem Systemstart wird die Zeit
+per NTP aus dem Internet bezogen.
 
 Da im geplanten Einsatz-Szenario keine Internet-Verbindung besteht, musste ein
 externes RTC-Modul für den Raspberry Pi nachgerüstet werden. Es enthält eine
@@ -417,8 +416,29 @@ eingesetzt. Dieses hält die gesamte Datenbank in einer einzigen Datei vor.
 
 \section{Aktueller Stand und verpflichtende Features}
 
+\begin{figure*}
+    \centering
+    \includegraphics[width=.9\textwidth]{images/development_setup.jpg}
+    \caption{Entwicklungs-Setup mit \glqq T-Cobbler\grqq{}-Adapter für einfachen
+    Zugriff auf die GPIO-Pins, PN532-Leser und Raspberry Pi samt Touchscreen.}
+    \label{fig:devsetup}
+\end{figure*}
+
+Der aktuelle Stand des Projektes ist in Abbildung \ref{fig:devsetup} zu sehen.
+Es zeigt den Entwicklungs-Aufbau. In der oberen Hälfte ist der Touchscreen 
+des Raspberry Pi abgebildet. Der Rechner selbst sitzt Huckepack auf der
+Unterseite des Bildschirms.
+
+In der unteren Hälfte sieht man ein Steckbrett samt \glqq
+T-Cobbler\grqq{}-Adapter. Durch die aufgedruckten Pin-Belegungen wird die
+Verwendung der GPIO-Schnittstelle im Vergleich zum bloßen Board des Raspberry
+Pi wesentlich erleichtert. Über das Steckbrett ist das PN532-Board angebunden.
+Auf der linken Seite führt die Stromversorgung sowie ein Ethernet-Kabel zum
+Raspberry Pi. Letzteres ermöglicht direktes Deployment und Debuggen vom
+Entwickler-Rechner aus.
+
 Zum gegenwärtigen Zeitpunkt sind die Grundfunktionalitäten des Projektes,
-bestehend aus Ansteuerung der Hardware, Implementierung von zentralen 
+bestehend aus Ansteuerung der Hardware und Implementierung von zentralen 
 Software-Komponenten, Datenbank-Anbindung und der grafischen Oberfläche 
 erfolgt. Es fehlen nur noch zwei Komponenten zur Fertigstellung:
 
@@ -450,8 +470,7 @@ aus dem Benutzerkonto parametrisiert werden können.
 
 Ein weiteres Wunsch-Feature ist die Abspeicherung von \emph{Transaktionen} mit
 Zeitstempeln. Dies würde eine Analyse des persönlichen Kaffee-Konsums
-ermöglichen. Die Implementierung dieses Features sollte als Opt-In nur für
-interessierte Benutzer erfolgen. 
+ermöglichen. 
 
 \printbibliography
 
