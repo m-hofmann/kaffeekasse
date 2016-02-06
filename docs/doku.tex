@@ -52,7 +52,8 @@
 \section{Motivation}
 
 Ziel des Projektes ist es, ein System zur Verwaltung von Nutzerkonten und zur
-Abrechnung von Kaffeekäufen in einer Büroumgebung zu gestalten. 
+Abrechnung von Kaffeekäufen in einer Büroumgebung zu gestalten. Es ergeben
+sich daher folgende Anforderungen:
 
 \begin{enumerate} 
     \item\label{req0} Die Authentifizierung von Nutzern muss möglichst einfach 
@@ -83,8 +84,8 @@ in den Kapiteln \ref{sec:hw} (der verwendete Touchscreen) und \ref{sec:sw}
 
 Anforderung \ref{req2} erforderte, ein externes Uhr-Modul an den Raspberry Pi
 anzubringen. Konsequenzen ergeben sich auch bei der Verwaltungsoberfläche:
-Diese muss am Gerät selbst zugänglich sein, statt mittels einem integrierten 
-Server eine Web-Schnittstelle zu realisieren.
+Diese muss am Gerät selbst zugänglich sein, statt mittels eines integrierten 
+Servers eine Web-Schnittstelle zu realisieren.
 
 \section{Auslesen von RFID-Karten} \label{sec:rfid}
 
@@ -138,14 +139,14 @@ Antenne erhältlich (siehe Abbildung \ref{fig:rfidnfc}).
     \label{tab:pn532pins}
 \end{table}
 
-Der PN532 kann an den Raspberry Pi über UART, I2C oder SPI angebunden werden.
-Laut \autocite{PN532Tutorial} bietet SPI die stabilste Verbindung. Die 
-Pin-Belegung ist in Tabelle \ref{tab:pn532pins} dargestellt.
+Der PN532 kann an den Raspberry Pi über UART, I\textsuperscript{2}C oder SPI
+angebunden werden.  Laut \autocite{PN532Tutorial} bietet SPI die stabilste
+Verbindung. Die Pin-Belegung ist in Tabelle \ref{tab:pn532pins} dargestellt.
 
 Die Konfiguration erfolgte problemlos nach dem verlinkten Tutorial. Im
 Unterschied zum Tutorial muss beim hier verwendeten Raspberry Pi 2 das
 Kernel-Modul \texttt{spi-bcm2835} geladen werden. Im Anschluss konnte der
-NFC-Leser mit dem Programm \texttt{nfc-list} aus dem \texttt{Libnfc}-Paket
+NFC-Leser mit dem Programm \texttt{nfc-list} aus dem \texttt{libnfc}-Paket
 angesprochen werden und lieferte auch die benötigte ID des Firmenausweises
 zurück.
 
@@ -164,7 +165,7 @@ sowie der großen aktiven Entwicklergemeinschaft fiel die Entscheidung dabei
 auf den Raspberry Pi 2. 
 
 Der Raspberry Pi bietet eine Leiste von Allzweck-Anschlüssen, an die die
-benötigten Hardware-Komponenten angeschlossen werden könnte. Mit einem
+benötigten Hardware-Komponenten angeschlossen werden können. Mit einem
 ARM-Quadcore-Prozessor mit einem Prozessortakt von \SI{900}{\mega\hertz} ist
 die Rechenleistung für das geplante Projekt ausreichend. Für grafische
 Oberflächen steht OpenGL-Hardware-Beschleunigung zur Verfügung, die jedoch im 
@@ -215,8 +216,8 @@ Blickwinkelstabilität; die Qualität ist unterhalb der von günstigen
 Tablet-Computern angesiedelt.
 
 Als weiterer Negativ-Punkt ist die fehlende Unterstützung der
-Helligkeitsregelung zu nennen. Während die Beleuchtung nach einem Patch von
-Software ein- und ausgeschaltet werden kann, ist die Erweiterung um eine
+Helligkeitsregelung zu nennen. Während die Beleuchtung nach einem Patch
+softwareseitig ein- und ausgeschaltet werden kann, ist die Erweiterung um eine
 Helligkeitsregelung ungewiss\autocite{TouchBacklight}.
 
 \subsection{DS3231 Uhr-Modul}
@@ -284,14 +285,15 @@ die Konfiguration als Slave (in dem der PN532 passiv wartet und von einem Host
 angesprochen wird). Im Rahmen des Projekts wird der PN532 vom NFC-Controller
 deswegen im Intervall von \SI{250}{\milli\second} abgefragt.
 
-Diese Lösung funktionierte mit zum Testen verwendeten \emph{Mifare Classic}
-Karten, die eine UID der Größe \SI{4}{\byte} haben, problemlos. Beim Test mit
-dem tatsächlichen Firmenausweis konnte jedoch keine UID gelesen werden.
+Diese Lösung funktionierte mit zum Testen verwendeten \emph{Mifare
+Classic}-Karten, die eine UID der Größe \SI{4}{\byte} haben, problemlos. Beim
+Test mit dem tatsächlichen Firmenausweis konnte jedoch keine UID gelesen
+werden.
 
 Debugging der vom Treiber empfangenen Frames mit Hilfe des technischen Handbuchs
 des PN532 ergab, dass der Treiber eine fest kodierte Paketlänge verwendet. Für
 Chips mit einer UID der Größe \SI{7}{\byte} führte dies dazu, dass die 
-Prüfsumme des Frames nicht mehr gelesen wurde und deren Überprüfung im Treiber
+Prüfsumme des Pakets nicht mehr gelesen wurde und deren Überprüfung im Treiber
 fehlschlug.
 
 Als Lösung wurde die Paketlänge entsprechend angepasst und ein Pull Request auf
@@ -434,7 +436,7 @@ T-Cobbler\grqq{}-Adapter. Durch die aufgedruckten Pin-Belegungen wird die
 Verwendung der GPIO-Schnittstelle im Vergleich zum bloßen Board des Raspberry
 Pi wesentlich erleichtert. Über das Steckbrett ist das PN532-Board angebunden.
 Auf der linken Seite führt die Stromversorgung sowie ein Ethernet-Kabel zum
-Raspberry Pi. Letzteres ermöglicht direktes Deployment und Debuggen vom
+Raspberry Pi. Letzteres ermöglicht direktes Deployment und Remote-Debuggen vom
 Entwickler-Rechner aus.
 
 Zum gegenwärtigen Zeitpunkt sind die Grundfunktionalitäten des Projektes,
